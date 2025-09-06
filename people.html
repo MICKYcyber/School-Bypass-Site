@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game</title>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            // Open a new tab with the current page content
+            const newWindow = window.open('about:blank', '_blank');
+            
+            if (newWindow) {
+                // Write the current page's HTML into the new tab
+                newWindow.document.write(document.documentElement.outerHTML);
+                newWindow.document.close();
+                
+                // Close the original tab
+                window.close();
+            }
+        });
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game</title>
+    <style>
+        /* Ensure the iframe fills the viewport */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe 
+        data-testid="gabe-frabe" 
+        id="gabe-frabe" 
+        allowfullscreen 
+        allow="autoplay; fullscreen; camera; focus-without-user-activation *; monetization; gamepad; keyboard-map *; xr-spatial-tracking; clipboard-write" 
+        name="appFrame" 
+        scrolling="no" 
+        sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-scripts allow-same-origin allow-downloads" 
+        src="https://raw.githubusercontent.com/MICKYcyber/School-Bypass-Site/refs/heads/main/peplplayf.html">
+    </iframe>
+</body>
+</html>
