@@ -5,17 +5,17 @@
 <title>Minecraft Hosting</title>
 <script src="https://opencraft-erc5.onrender.com/socket.io/socket.io.js"></script>
 <style>
-    body { font-family: Arial; background: #f0f0f0; margin: 0; padding: 20px; display: flex; justify-content: center; }
-    .chat-container { width: 100%; max-width: 600px; }
-    .tabs { display: flex; margin-bottom: 10px; gap: 5px; }
-    .tab { padding: 10px 20px; background: #00796b; color: white; cursor: pointer; border-radius: 5px 5px 0 0; }
-    .tab.active { background: #004d40; font-weight: bold; }
-    .chat, .server { border: 1px solid #333; border-radius: 8px; padding: 10px; background: white; display: none; flex-direction: column; gap: 10px; height: 400px; overflow-y: auto; }
-    .chat.active, .server.active { display: flex; }
-    .message-card { background: #e0f7fa; border-radius: 5px; padding: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    input, button { width: 100%; padding: 10px; margin-top: 5px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-    button { background: #00796b; color: white; border: none; cursor: pointer; }
-    button:hover { background: #004d40; }
+body { font-family: Arial; background: #f0f0f0; margin: 0; padding: 20px; display: flex; justify-content: center; }
+.chat-container { width: 100%; max-width: 600px; }
+.tabs { display: flex; margin-bottom: 10px; gap: 5px; }
+.tab { padding: 10px 20px; background: #00796b; color: white; cursor: pointer; border-radius: 5px 5px 0 0; }
+.tab.active { background: #004d40; font-weight: bold; }
+.chat, .server { border: 1px solid #333; border-radius: 8px; padding: 10px; background: white; display: none; flex-direction: column; gap: 10px; height: 400px; overflow-y: auto; }
+.chat.active, .server.active { display: flex; }
+.message-card { background: #e0f7fa; border-radius: 5px; padding: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+input, button { width: 100%; padding: 10px; margin-top: 5px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+button { background: #00796b; color: white; border: none; cursor: pointer; }
+button:hover { background: #004d40; }
 </style>
 </head>
 <body>
@@ -78,11 +78,18 @@ tabs.forEach(tab => {
     });
 });
 
-// Listen for messages
-socket.on('allMessages', (messages) => {
-    messages.forEach(msg => {
-        if(!msg.room) return;
-        if(messagesByRoom[msg.room]) messagesByRoom[msg.room].push(msg);
+// Listen for new messages
+socket.on('newMessage', (msg) => {
+    if(!messagesByRoom[msg.room]) messagesByRoom[msg.room] = [];
+    messagesByRoom[msg.room].push(msg);
+    renderMessages(activeTab);
+});
+
+// Also send all previous messages on first join
+socket.on('allMessages', (msgs) => {
+    msgs.forEach(msg => {
+        if(!messagesByRoom[msg.room]) messagesByRoom[msg.room] = [];
+        messagesByRoom[msg.room].push(msg);
     });
     renderMessages(activeTab);
 });
