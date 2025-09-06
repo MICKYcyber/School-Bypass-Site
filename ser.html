@@ -51,7 +51,7 @@ const chats = document.querySelectorAll('.chat, .server');
 const chatInput = document.getElementById('messageInput');
 let activeTab = 'chat1';
 
-// Store messages per room, including server tab
+// Store messages per room
 const messagesByRoom = { chat1: [], chat2: [], chat3: [], chat4: [], chat5: [], server: [] };
 
 // Join initial room
@@ -68,11 +68,13 @@ tabs.forEach(tab => {
         document.getElementById(tabId).classList.add('active');
         activeTab = tabId;
 
-        // Adjust input maxlength
+        // Adjust input maxlength and placeholder
         if(activeTab === 'server') {
-            chatInput.maxLength = 5; // 5 char limit for server tab
+            chatInput.maxLength = 5;
+            chatInput.placeholder = "Join Code (5 Char Max)";
         } else {
-            chatInput.maxLength = 50; // normal chat rooms
+            chatInput.maxLength = 50;
+            chatInput.placeholder = "Type a message";
         }
 
         socket.emit('joinRoom', activeTab);
@@ -87,7 +89,7 @@ socket.on('newMessage', (msg) => {
     renderMessages(activeTab);
 });
 
-// Also load all previous messages
+// Load all previous messages
 socket.on('allMessages', (msgs) => {
     msgs.forEach(msg => {
         if(!messagesByRoom[msg.room]) messagesByRoom[msg.room] = [];
