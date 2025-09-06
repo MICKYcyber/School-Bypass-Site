@@ -44,7 +44,7 @@ html, body {
     display: none;
     flex-direction: column;
     justify-content: flex-start;
-    overflow: hidden; /* No scrolling */
+    overflow-y: auto; /* Scroll vertically if too many messages */
 }
 .chat.active, .server.active {
     display: flex;
@@ -59,6 +59,8 @@ html, body {
 .input-container {
     display: flex;
     width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
 }
 input {
     flex: 1;
@@ -66,7 +68,6 @@ input {
     font-size: 1rem;
     border-radius: 5px 0 0 5px;
     border: 1px solid #ccc;
-    box-sizing: border-box;
 }
 button {
     padding: 10px 20px;
@@ -158,23 +159,19 @@ socket.on('allMessages', (msgs) => {
     renderMessages(activeTab);
 });
 
-// Render messages without scrolling
+// Render messages
 function renderMessages(room) {
     const chatDiv = document.getElementById(room);
     if(!chatDiv) return;
     chatDiv.innerHTML = '';
-    const roomMessages = messagesByRoom[room];
-    
-    // Fit messages to container height
-    const maxMessages = Math.floor(chatDiv.clientHeight / 35); // approx message height
-    const visibleMessages = roomMessages.slice(-maxMessages);
-
-    visibleMessages.forEach(msg => {
+    messagesByRoom[room].forEach(msg => {
         const div = document.createElement('div');
         div.className = 'message-card';
         div.textContent = msg.name;
         chatDiv.appendChild(div);
     });
+    // Auto scroll to bottom
+    chatDiv.scrollTop = chatDiv.scrollHeight;
 }
 
 // Send message
