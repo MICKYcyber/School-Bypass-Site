@@ -65,7 +65,6 @@
     <h2>Minecraft Server Hosting</h2>
     <div id="chat"></div>
     <input type="text" id="name" placeholder="Join Code (5 chars max)" maxlength="5">
-    <input type="text" id="description" placeholder="Description (20 chars max)" maxlength="20">
     <button onclick="sendMessage()">Send</button>
 </div>
 
@@ -78,7 +77,7 @@
         messages.forEach(msg => {
             const div = document.createElement('div');
             div.className = 'message-card';
-            div.textContent = `${msg.name}: ${msg.description}`;
+            div.textContent = msg.name;
             chat.appendChild(div);
         });
         chat.scrollTop = chat.scrollHeight;
@@ -86,10 +85,9 @@
 
     function sendMessage() {
         const name = document.getElementById('name').value.trim();
-        const description = document.getElementById('description').value.trim();
-        if (!name || !description) return;
-        socket.emit('newMessage', { name, description });
-        document.getElementById('description').value = '';
+        if (!name) return;
+        socket.emit('newMessage', { name });
+        document.getElementById('name').value = '';
     }
 </script>
 </body>
