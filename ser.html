@@ -37,12 +37,10 @@ button:hover { background: #004d40; }
     <div id="chat5" class="chat"></div>
 
     <!-- Minecraft Server Hosting -->
-    <div id="server" class="server">
-        <input type="text" id="joinCode" placeholder="Join Code" maxlength="5">
-    </div>
+    <div id="server" class="server"></div>
 
     <!-- Input for chat -->
-    <input type="text" id="messageInput" placeholder="Type a message (50 chars max)" maxlength="50">
+    <input type="text" id="messageInput" placeholder="Type a message" maxlength="50">
     <button onclick="sendMessage()">Send</button>
 </div>
 
@@ -53,8 +51,8 @@ const chats = document.querySelectorAll('.chat, .server');
 const chatInput = document.getElementById('messageInput');
 let activeTab = 'chat1';
 
-// Store messages per chat room
-const messagesByRoom = { chat1: [], chat2: [], chat3: [], chat4: [], chat5: [] };
+// Store messages per room, including server tab
+const messagesByRoom = { chat1: [], chat2: [], chat3: [], chat4: [], chat5: [], server: [] };
 
 // Join initial room
 socket.emit('joinRoom', activeTab);
@@ -70,11 +68,15 @@ tabs.forEach(tab => {
         document.getElementById(tabId).classList.add('active');
         activeTab = tabId;
 
-        chatInput.style.display = activeTab === 'server' ? 'none' : 'block';
-        if(activeTab !== 'server') {
-            socket.emit('joinRoom', activeTab);
-            renderMessages(activeTab);
+        // Adjust input maxlength
+        if(activeTab === 'server') {
+            chatInput.maxLength = 5; // 5 char limit for server tab
+        } else {
+            chatInput.maxLength = 50; // normal chat rooms
         }
+
+        socket.emit('joinRoom', activeTab);
+        renderMessages(activeTab);
     });
 });
 
@@ -85,7 +87,7 @@ socket.on('newMessage', (msg) => {
     renderMessages(activeTab);
 });
 
-// Also send all previous messages on first join
+// Also load all previous messages
 socket.on('allMessages', (msgs) => {
     msgs.forEach(msg => {
         if(!messagesByRoom[msg.room]) messagesByRoom[msg.room] = [];
@@ -96,8 +98,8 @@ socket.on('allMessages', (msgs) => {
 
 // Render messages
 function renderMessages(room) {
-    if(!room.startsWith('chat')) return;
     const chatDiv = document.getElementById(room);
+    if(!chatDiv) return;
     chatDiv.innerHTML = '';
     messagesByRoom[room].forEach(msg => {
         const div = document.createElement('div');
@@ -110,7 +112,6 @@ function renderMessages(room) {
 
 // Send message
 function sendMessage() {
-    if(activeTab === 'server') return; // Server tab cannot send chat
     const name = chatInput.value.trim();
     if(!name) return;
     socket.emit('newMessage', { name, room: activeTab });
