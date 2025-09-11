@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #212529;
+      color: white;
+    }
+
+    .login-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #212529;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    input[type="text"], input[type="password"] {
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 20px;
+      width: 220px;
+      background-color: #343a40;
+      color: white;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .error {
+      color: #ff4d4f;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="text" id="usernameInput" placeholder="Username">
+    <input type="password" id="passwordInput" placeholder="Password">
+    <button id="loginBtn">Login</button>
+    <div id="errorMsg" class="error"></div>
+  </div>
+
+  <script>
+    // Multiple users and their passwords
+    const users = {
+      "Curtis": "raybanDs1",
+      "Lincoln": "trashpansc1",
+      "Geo": "randompass5",
+      "guest": "guest124"
+    };
+
+    const githubLink = "https://raw.githubusercontent.com/USERNAME/REPO/BRANCH/FILE.html"; // <-- Change this
+
+    function login() {
+      const username = document.getElementById("usernameInput").value;
+      const password = document.getElementById("passwordInput").value;
+
+      if(users[username] && users[username] === password) {
+        const newWin = window.open("about:blank", "_blank");
+        if (!newWin) return alert("Popup blocked! Please allow popups.");
+
+        fetch(githubLink)
+          .then(res => res.text())
+          .then(html => {
+            newWin.document.open();
+            newWin.document.write(html);
+            newWin.document.close();
+          })
+          .catch(err => {
+            newWin.document.write("<h1 style='color:red'>Error loading file</h1><p>" + err + "</p>");
+          });
+      } else {
+        document.getElementById("errorMsg").textContent = "Incorrect username or password!";
+      }
+    }
+
+    document.getElementById("loginBtn").addEventListener("click", login);
+
+    // Press Enter to submit
+    document.getElementById("passwordInput").addEventListener("keydown", (e) => {
+      if(e.key === "Enter") login();
+    });
+    document.getElementById("usernameInput").addEventListener("keydown", (e) => {
+      if(e.key === "Enter") login();
+    });
+  </script>
+</body>
+</html>
